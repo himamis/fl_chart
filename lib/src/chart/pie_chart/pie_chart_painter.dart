@@ -262,7 +262,7 @@ class PieChartPainter extends BaseChartPainter<PieChartData> {
     final radius = Radius.circular(roundedCornerRadius);
     final radians = Utils().radians(roundedCornerDegrees);
     // Add extra 2 pixel margin to fix numeric issues.
-    final largeRadius = Radius.circular(centerRadius + sectionRadius + 2);
+    final largeRadius = Radius.circular(centerRadius + sectionRadius + 10);
 
     final cStartRadians = startRadians + radians;
     final cStartLineDirection = Offset(math.cos(cStartRadians), math.sin(cStartRadians));
