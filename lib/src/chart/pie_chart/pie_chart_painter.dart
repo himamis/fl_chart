@@ -196,8 +196,12 @@ class PieChartPainter extends BaseChartPainter<PieChartData> {
       final cornerCutout = createRoundedCornerCutout(roundedCornerDegrees,
           roundedCornerRadius, center, startLineFrom, startLineTo, startRadians,
           endLineFrom, endLineTo, endRadians, centerRadius, section.radius);
-      sectionPath = Path.combine(
-          PathOperation.difference, sectionPath, cornerCutout);
+      try {
+        sectionPath = Path.combine(
+            PathOperation.difference, sectionPath, cornerCutout);
+      } catch (_) {
+        // Ignore
+      }
     }
 
     return sectionPath;
@@ -263,8 +267,17 @@ class PieChartPainter extends BaseChartPainter<PieChartData> {
       double sectionRadius) {
     final radius = Radius.circular(roundedCornerRadius);
     final radians = Utils().radians(roundedCornerDegrees);
-    // Add extra 2 pixel margin to fix numeric issues.
-    final largeRadius = Radius.circular(centerRadius + sectionRadius + 10);
+    final largeRadius = Radius.circular(centerRadius + sectionRadius);
+
+    // Ensure that no NaNs are produced during difference
+    final mult = 1.0;
+    final startLineOffset = Offset(math.cos(startRadians), math.sin(startRadians));
+    startLineTo += startLineOffset * mult;
+    startLineFrom -= startLineOffset * mult;
+
+    final endLineOffset = Offset(math.cos(endRadians), math.sin(endRadians));
+    endLineTo += endLineOffset * mult;
+    endLineFrom -= endLineOffset * mult;
 
     final cStartRadians = startRadians + radians;
     final cStartLineDirection = Offset(math.cos(cStartRadians), math.sin(cStartRadians));
